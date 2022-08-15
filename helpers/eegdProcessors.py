@@ -55,13 +55,27 @@ def getRandomNumberOfEpochs(epochs, nofepochs, seed=None):
     # Uzima prvih n epocha gjde je n broj trazenih epocha
     return epochs[0:nofepochs]
 
-def getLabeledEpochs(raw_data, ratio, seed=None):
+def getLabeledEpochs(raw_data, ratio, seed=None, filterChain = []):
+        # Iscitavanje 'data' polja iz .mat datoteke
         target_data = getEpochsDataFromRaw(raw_data, 0)
         nonTarget_data = getEpochsDataFromRaw(raw_data, 1)
 
+        # Formatiranje podataka tako da budu kao lista epoha
+        # iteriranje je onda po [epoh, elektroda, sample]
+        # npr. ako trazimo epoh 3: epoh3 = target_epochs[2]
+        # dobiti ce se dvodimenzionalni array pa recimo svi samplovi mjerenja elektrode 8: epoh3[7]
         target_epochs = dataToListOfEpochs(target_data)
         nonTarget_epochs = dataToListOfEpochs(nonTarget_data)
 
+        # filtriranje podataka filtrima poslanim funkciji
+        for filter in filterChain:
+            target_epochs = filter(target_epochs)
+            nonTarget_epochs = filter(nonTarget_epochs)
+
+
+        ## uzimanje odabranog omjera target i non target mjerenja
+        ## uzorci se iz ukupnih podataka uzimaju nasumicno
+        ## moze se dati seed pa je moguce reproducirati izlanu listu epoha
         lenTarget = len(target_epochs)
         lenNonTarget = len(nonTarget_epochs)
 
@@ -95,8 +109,9 @@ class DownSample(object):
     def __call__(self, epoch):
         eph = []
         n = self.ntimes
+        # Za svaku elektrodu izbrisi mjerenje svakih n mjesta
         for i in range(epoch.shape[0]):
-            sensorData = epoch[i, :]
+            sensorData = epoch[i, :] # sensordata za elektrodu i
             sensorData = sensorData[n-1::n]
             eph.append(sensorData)
         return np.array(eph)
@@ -116,3 +131,26 @@ class BPButter4(object):
             filtered = signal.sosfilt(sos, sensorData)
             eph.append(filtered)
         return np.array(eph)
+
+# Funkcija eliminira outliere tako da provjerava standardnu devijaciju 
+# maksimuma svih 16 mjerenja, takodjen minimuma svih 16 mjerenja
+# ako je std veca od 14 epoh se eliminira iz dataseta
+# 14 dobiveno experimentalno
+def filter_removeOutliers(epochs):
+    tresh = 14
+    filtered = []
+    for epoch in epochs:
+        mins = []
+        maxes = []
+        for i in range(epoch.shape[0]):
+            sensorData = epoch[i, :] # sensordata za elektrodu i
+            mins.append(sensorData.min())
+            maxes.append(sensorData.min())
+        std_min = np.array(mins).std()
+        std_max = np.array(maxes).std()
+        # Ako je standardna devijacija veca od tresholda, ne dodaj u filtered array
+        if std_min > tresh or std_max > tresh:
+            pass
+        else:
+            filtered.append(epoch)
+    return filtered
