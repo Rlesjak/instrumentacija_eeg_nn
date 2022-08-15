@@ -3,6 +3,7 @@
 
 import numpy as np
 import random
+from scipy import signal
 
 # Izvuci evente iz importane .mat datoteke
 # drugi argument je broj reda iz ALLDATA strukture (npr 0ti red je 'EEG target')
@@ -98,4 +99,20 @@ class DownSample(object):
             sensorData = epoch[i, :]
             sensorData = sensorData[n-1::n]
             eph.append(sensorData)
+        return np.array(eph)
+
+# Butterworthov pojasnopropusni filtar, transformer klasa
+class BPButter4(object):
+    def __init__(self, low, high, fs):
+        self.low = low
+        self.high = high
+        self.fs = fs
+
+    def __call__(self, epoch):
+        sos = signal.butter(4, [self.low, self.high], btype='bandpass', output='sos', fs=self.fs)
+        eph = []
+        for i in range(epoch.shape[0]):
+            sensorData = epoch[i, :]
+            filtered = signal.sosfilt(sos, sensorData)
+            eph.append(filtered)
         return np.array(eph)
