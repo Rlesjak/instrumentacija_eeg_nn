@@ -30,3 +30,4 @@ def getEpochsDataFromRaw(raw_dict, setIndex = 0):
     print('SETNAME> ' ,np_set['setname'][0])
     print('DATA SHAPE> ' ,np_set['data'].shape)
     return np_set['data']
+
