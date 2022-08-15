@@ -132,6 +132,22 @@ class BPButter4(object):
             eph.append(filtered)
         return np.array(eph)
 
+
+# transformator za normalizaciju mjerenja
+# po (pdf: CNN for P300 Detec... sekcija 3.1 na stranici 436)
+class Normalise(object):
+    def __call__(self, epoch):
+        eph = []
+        for i in range(epoch.shape[0]):
+            sensorData = epoch[i, :] # sensordata za elektrodu i
+            avg = np.average(sensorData)
+            std = np.std(sensorData)
+            sensorData = (sensorData - avg) / std
+            eph.append(sensorData)
+        return np.array(eph)
+
+        
+
 # Funkcija eliminira outliere tako da provjerava standardnu devijaciju 
 # maksimuma svih 16 mjerenja, takodjen minimuma svih 16 mjerenja
 # ako je std veca od 14 epoh se eliminira iz dataseta
