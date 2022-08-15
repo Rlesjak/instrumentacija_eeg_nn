@@ -85,3 +85,17 @@ def getLabeledEpochs(raw_data, ratio, seed=None):
             labeledEpochs.append((1, eph))
         
         return labeledEpochs
+
+# Downsaple transformer klasa
+class DownSample(object):
+    def __init__(self, ntimes):
+        self.ntimes = ntimes
+    
+    def __call__(self, epoch):
+        eph = []
+        n = self.ntimes
+        for i in range(epoch.shape[0]):
+            sensorData = epoch[i, :]
+            sensorData = sensorData[n-1::n]
+            eph.append(sensorData)
+        return np.array(eph)
