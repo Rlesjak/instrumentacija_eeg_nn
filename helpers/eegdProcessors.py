@@ -34,11 +34,12 @@ def getEpochsDataFromRaw(raw_dict, setIndex = 0):
     return np_set['data']
 
 def dataToListOfEpochs(data):
-    list = []
-    nOfEpochs = data.shape[2]
-    for i in range(nOfEpochs):
-        list.append(data[:,:,i])
-    return list
+    return np.swapaxes(np.swapaxes(data,0,2), 1, 2)
+    # list = []
+    # nOfEpochs = data.shape[2]
+    # for i in range(nOfEpochs):
+    #     list.append(data[:,:,i])
+    # return list
 
 def getRandomNumberOfEpochs(epochs, nofepochs, seed=None):
     epochsLen = len( epochs )
@@ -148,25 +149,26 @@ class Normalise(object):
 
         
 
-# Funkcija eliminira outliere tako da provjerava standardnu devijaciju 
+# klasa eliminira outliere tako da provjerava standardnu devijaciju 
 # maksimuma svih 16 mjerenja, takodjen minimuma svih 16 mjerenja
-# ako je std veca od 14 epoh se eliminira iz dataseta
-# 14 dobiveno experimentalno
-def filter_removeOutliers(epochs):
-    tresh = 14
-    filtered = []
-    for epoch in epochs:
-        mins = []
-        maxes = []
-        for i in range(epoch.shape[0]):
-            sensorData = epoch[i, :] # sensordata za elektrodu i
-            mins.append(sensorData.min())
-            maxes.append(sensorData.min())
-        std_min = np.array(mins).std()
-        std_max = np.array(maxes).std()
-        # Ako je standardna devijacija veca od tresholda, ne dodaj u filtered array
-        if std_min > tresh or std_max > tresh:
-            pass
-        else:
-            filtered.append(epoch)
-    return filtered
+class F_RemoveOutliers(object):
+    def __init__(self, tresh = 14):
+        self.tresh = tresh
+    
+    def __call__(self, epochs):
+        filtered = []
+        for epoch in epochs:
+            mins = []
+            maxes = []
+            for i in range(epoch.shape[0]):
+                sensorData = epoch[i, :] # sensordata za elektrodu i
+                mins.append(sensorData.min())
+                maxes.append(sensorData.min())
+            std_min = np.array(mins).std()
+            std_max = np.array(maxes).std()
+            # Ako je standardna devijacija veca od tresholda, ne dodaj u filtered array
+            if std_min > self.tresh or std_max > self.tresh:
+                pass
+            else:
+                filtered.append(epoch)
+        return np.array(filtered)
