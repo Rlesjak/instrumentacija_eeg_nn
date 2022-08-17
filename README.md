@@ -6,6 +6,16 @@
 ```shell
 pip3 install torch numpy matplotlib scipy torchvision --user
 ```
+Ako se želi trenirati model nVidia grafičkom karticom treba instalirati CUDA toolkit
+https://developer.nvidia.com/cuda-toolkit
+
+te tek onda pytorch i to po uputama s ove stranice:
+https://pytorch.org/get-started/locally/
+
+npr. ako se koristi pip i windows10
+```shell
+pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu116
+```
 
 ### Zatim je potrebno u `data` direktorij staviti .mat datoteku u kojoj se nalaze podatci i naziv datoteke odabrati pri importu
 ```python
