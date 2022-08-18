@@ -94,3 +94,4 @@ test_data = eegDataset(eeg_2s_raw, 1/3, 'abc', transform=transforms.Compose([
 ---
 
 Moglo bi se istrenirati model konstantnim nasumičnim mjenjanjem parametra filtriranja pa bi se možda dobio bolji model koji je manje specifičan.
+> Treniranje nasumicnim podatcima: https://demo.rlesjak.info/instrumentacija/test-nn-1000eph-rndVar-18.8.22
