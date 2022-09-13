@@ -56,17 +56,10 @@ def getRandomNumberOfEpochs(epochs, nofepochs, seed=None):
     # Uzima prvih n epocha gjde je n broj trazenih epocha
     return epochs[0:nofepochs]
 
-def getLabeledEpochs(raw_data, ratio, seed=None, filterChain = []):
-        # Iscitavanje 'data' polja iz .mat datoteke
-        target_data = getEpochsDataFromRaw(raw_data, 0)
-        nonTarget_data = getEpochsDataFromRaw(raw_data, 1)
-
-        # Formatiranje podataka tako da budu kao lista epoha
-        # iteriranje je onda po [epoh, elektroda, sample]
-        # npr. ako trazimo epoh 3: epoh3 = target_epochs[2]
-        # dobiti ce se dvodimenzionalni array pa recimo svi samplovi mjerenja elektrode 8: epoh3[7]
-        target_epochs = dataToListOfEpochs(target_data)
-        nonTarget_epochs = dataToListOfEpochs(nonTarget_data)
+def getLabeledEpochs(target, nontarget, ratio, seed=None, filterChain = []):
+        
+        target_epochs = target
+        nonTarget_epochs = nontarget
 
         # filtriranje podataka filtrima poslanim funkciji
         for filter in filterChain:

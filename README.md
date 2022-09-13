@@ -66,28 +66,30 @@ Funkcija getLabeledEpochs() vraća podatke sa svim preprocesiranjem izvršenim n
 
 Filtri su implementirani kao klase kako bi se moglo lakše mjenjati parametre. Pozivaju se kod kreiranja dataseta:
 ```python
-training_data = eegDataset(eeg_1s_raw, 1/3, 'abc', transform=transforms.Compose([
-	DownSample(downsapling),
-	BPButter4(0.1, 20, 512/downsapling),
-	Normalise()
-]), filterChain=[
-	F_RemoveOutliers(200)
-])
-```
-Kod kreiranja dataseta moguće je birati omjer target i non target podataka. Ovdje su sva treniranja rađena na omjeru 1/3.
-
-
-Podatci iz drugog .mat filea imaju veći sampling rate (1024 umjesto 512) pa se prije korištenja downsapleaju podatci, ali svi ostali parametri filtriranja ostaju isti, jer je s takvim podatcima istreniran model.
-
-```python
-downsapling = 2
-test_data = eegDataset(eeg_2s_raw, 1/3, 'abc', transform=transforms.Compose([
+training_data = eegDataset(TRAINING_target_epochs, TRAINING_nonTarget_epochs, 1/5, 'abc' transform=transforms.Compose([
     DownSample(downsapling),
-    BPButter4(0.1, 20, 1024/downsapling),
+    BPButter4(0.1, 20, 512/downsapling),
     Normalise()
 ]), filterChain=[
     F_RemoveOutliers(200)
 ])
+train_dataloader = DataLoader(training_data, batch_size=4, shuffle=True)
+```
+Kod kreiranja dataseta moguće je birati omjer target i non target podataka. Ovdje su sva treniranja rađena na omjeru 1/5.
+
+
+Podatci iz drugog .mat filea sadrže 2s mjerenja umjesto 1s (1024 umjesto 512), pa se prije korištenja downsapleaju podatci, ali svi ostali parametri filtriranja ostaju isti, jer je s takvim podatcima istreniran model.
+
+```python
+downsapling = 2
+testing_data = eegDataset(TESTING_target_epochs, TESTING_nonTarget_epochs, 1/5, 'abc', transform=transforms.Compose([
+    DownSample(downsapling),
+    BPButter4(0.1, 20, 512/downsapling),
+    Normalise()
+]), filterChain=[
+    F_RemoveOutliers(200)
+])
+testing_dataloader = DataLoader(testing_data, batch_size=4, shuffle=True)
 ```
 
 ### Ideje
