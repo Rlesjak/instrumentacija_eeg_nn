@@ -96,4 +96,4 @@ testing_dataloader = DataLoader(testing_data, batch_size=4, shuffle=True)
 ---
 
 Moglo bi se istrenirati model konstantnim nasumičnim mjenjanjem parametra filtriranja pa bi se možda dobio bolji model koji je manje specifičan.
-> Treniranje nasumicnim podatcima: [https://demo.rlesjak.info/instrumentacija/test-nn-1000eph-rndVar-18.8.22](https://static.etvornica.hr/instrumentacija/test-nn-1000eph-rndVar-18.8.22)
+> Treniranje nasumicnim podatcima: [https://static.etvornica.hr/instrumentacija/test-nn-1000eph-rndVar-18.8.22](https://static.etvornica.hr/instrumentacija/test-nn-1000eph-rndVar-18.8.22)
